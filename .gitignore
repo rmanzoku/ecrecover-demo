@@ -1,6 +1,9 @@
 .direnv
-node_modules
+node_modules/
+contracts/lib/
 package-lock.json
+.idea/
+.nuxt/
 
 # Binaries for programs and plugins
 *.exe
