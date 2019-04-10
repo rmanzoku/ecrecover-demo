@@ -1,0 +1,23 @@
+{
+  "name": "ecrecover-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "remixd": "^0.1.8-alpha.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmanzoku/ecrecover-demo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rmanzoku/ecrecover-demo/issues"
+  },
+  "homepage": "https://github.com/rmanzoku/ecrecover-demo#readme"
+}
