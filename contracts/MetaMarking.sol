@@ -39,7 +39,7 @@ contract MCHMetaMarking is OperatorRole {
                      );
   }
 
-  function ecdsaRecover(bytes32 _data, bytes memory _sig) public pure returns (address) {
+  function recover(bytes32 _data, bytes memory _sig) public pure returns (address) {
     bytes32 data = ECDSA.toEthSignedMessageHash(_data);
     return ECDSA.recover(data, _sig);
   }
@@ -48,7 +48,7 @@ contract MCHMetaMarking is OperatorRole {
     require(relayers[msg.sender] == true, "msg.sender is not relayer");
     require(nonces[_from]+1 == _nonce, "nonces[_from]+1 != _nonce");
     bytes32 encodedData = encodeData(_from, _markAt, _landType, _nonce, msg.sender);
-    address signer = ecdsaRecover(encodedData, _sig);
+    address signer = recover(encodedData, _sig);
     require(_from == signer, "signer != _from");
 
     _mark(_from, _markAt, _uid, _isPrime, _landType);
