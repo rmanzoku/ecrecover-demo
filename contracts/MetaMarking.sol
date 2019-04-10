@@ -2,18 +2,36 @@ pragma solidity 0.5.7;
 
 contract MCHMetaMarking {
 
+  struct Mark {
+    bool isExist;
+    uint markAt;
+    // uint32 uid;
+    uint8 landType;
+    // bool isPrime;
+  }
+
+
   mapping(uint8 => address[]) public addressesByLandType;
-  mapping(address => uint8) public landTypeByAddress;
+  mapping(address => Mark) public latestMarkByAddress;
+
 
   constructor() public {
   }
 
-  function addMember(uint8 _landType, address _user) public {
-    uint8 currentLandType = landTypeByAddress[_user];
-    require(_landType != 0, "_landType != 0");
-    require(_landType != currentLandType, "Already added member");
+  function mark(uint8 _landType, address _user) public {
 
-    if (currentLandType != 0) {
+    if (!latestMarkByAddress[_user].isExist) {
+      latestMarkByAddress[_user] = Mark(
+                                        true,
+                                        block.number,
+                                        _landType
+                                        );
+      addressesByLandType[_landType].push(_user);
+      return;
+    }
+
+    uint8 currentLandType = latestMarkByAddress[_user].landType;
+    if (currentLandType != _landType) {
       uint256 i;
       for (i = 0; i < addressesByLandType[_landType].length; i++) {
 	if (addressesByLandType[_landType][i] != _user) {
@@ -22,10 +40,11 @@ contract MCHMetaMarking {
       }
 
       delete addressesByLandType[currentLandType][i];
+      addressesByLandType[_landType].push(_user);
     }
 
-    addressesByLandType[_landType].push(_user);
-    landTypeByAddress[_user] = _landType;
+    latestMarkByAddress[_user].markAt = block.number;
+    latestMarkByAddress[_user].landType = _landType;
   }
 
   function getAddressesByLandType(uint8 _landType) public view returns (address[] memory){
