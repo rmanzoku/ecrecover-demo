@@ -6,7 +6,6 @@ import "./lib/github.com/doublejumptokyo/contract-library-0.0.4/contracts/access
 contract MCHMetaMarking is OperatorRole {
 
   mapping(address => uint256) public nonces;
-  mapping(address => bool) public relayers;
   struct Mark {
     bool isExist;
     uint markAt;
@@ -20,11 +19,6 @@ contract MCHMetaMarking is OperatorRole {
 
   constructor() public {
     addOperator(address(0xd868711BD9a2C6F1548F5f4737f71DA67d821090));
-    relayers[address(0xd868711BD9a2C6F1548F5f4737f71DA67d821090)] = true;
-  }
-
-  function setRelayer(address _relayer, bool _new) external onlyOwner() {
-    relayers[_relayer] = _new;
   }
 
   function encodeData(address _from, uint256 _markAt, uint8 _landType, uint256 _nonce, address _relayer) public view returns (bytes32) {
@@ -44,8 +38,9 @@ contract MCHMetaMarking is OperatorRole {
     return ECDSA.recover(data, _sig);
   }
 
-  function executeMarkMetaTx(address _from, uint256 _markAt, uint32 _uid, bool _isPrime, uint8 _landType, uint256 _nonce, bytes calldata _sig) external {
-    require(relayers[msg.sender] == true, "msg.sender is not relayer");
+  function executeMarkMetaTx(address _from, uint256 _markAt, uint32 _uid, bool _isPrime,
+                             uint8 _landType, uint256 _nonce, bytes calldata _sig) external onlyOperator() {
+
     require(nonces[_from]+1 == _nonce, "nonces[_from]+1 != _nonce");
     bytes32 encodedData = encodeData(_from, _markAt, _landType, _nonce, msg.sender);
     address signer = recover(encodedData, _sig);
